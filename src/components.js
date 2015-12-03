@@ -32,6 +32,10 @@ function everyObj(f, obj) {
   return true;
 }
 
+function onEnd(callback) {
+  callback(this.state.currentStyles);
+}
+
 export default function components(React) {
   const {PropTypes} = React;
 
@@ -57,6 +61,7 @@ export default function components(React) {
       defaultStyle: PropTypes.object,
       style: PropTypes.object.isRequired,
       children: PropTypes.func.isRequired,
+      onEnd: PropTypes.func,
     },
 
     getInitialState() {
@@ -90,6 +95,7 @@ export default function components(React) {
           noVelocity(newCurrentVelocity, newCurrentStyle)) {
         // check explanation in `Motion.animationRender`
         this.stopAnimation(); // Nasty side effects....
+        if (this.props.onEnd) onEnd.call(this, this.props.onEnd);
       }
 
       return {
@@ -161,6 +167,7 @@ export default function components(React) {
       defaultStyles: PropTypes.arrayOf(PropTypes.object),
       styles: PropTypes.func.isRequired,
       children: PropTypes.func.isRequired,
+      onEnd: PropTypes.func
     },
 
     getInitialState() {
@@ -195,6 +202,7 @@ export default function components(React) {
       if (currentVelocities.every((v, k) => noVelocity(v, currentStyles[k])) &&
           newCurrentVelocities.every((v, k) => noVelocity(v, newCurrentStyles[k]))) {
         this.stopAnimation();
+        if (this.props.onEnd) onEnd.call(this, this.props.onEnd);
       }
 
       return {
